@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 //PlayerDao to interact with the database
@@ -16,7 +17,7 @@ public class PlayerDao {
     JdbcTemplate jdbcTemplate;
 
     /**
-     * Select Method
+     * SELECT Method
      * @return
      */
     public List<Player> getAllPlayers(){
@@ -24,11 +25,29 @@ public class PlayerDao {
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<Player>(Player.class));
     }
 
+    /**
+     * SELECT BY ID
+     * @param id
+     * @return
+     */
     public Player getPlayerById(int id){
         String sql = "SELECT * FROM PLAYER WHERE ID = ?";
         return jdbcTemplate.queryForObject(sql,
                                             new BeanPropertyRowMapper<Player>(Player.class),
                                             new Object[] {id});
+    }
+
+    /**
+     * UPDATE "INSERT" method
+     * @param player
+     * @return
+     */
+    public int insertPlayer(Player player){
+        String sql = "INSERT INTO PLAYER (ID, Name, Nationality,Birth_date, Titles) " +
+                "VALUES (?, ?, ?, ?, ?)";
+        return jdbcTemplate.update(sql, new Object[] {player.getId(), player.getName(), player.getNationality(),
+                            new Timestamp(player.getBirthDate().getTime()),
+                            player.getTitles()});
     }
 
 }
